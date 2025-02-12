@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import Card from "../components/Card";
-import useSWR from "swr";
-import { StyledLink } from "../components/StyledLink";
+import styled from 'styled-components';
+import Card from '../components/Card';
+import useSWR from 'swr';
+import { StyledLink } from '../components/StyledLink';
 
 const ListContainer = styled.ul`
   list-style: none;
@@ -17,19 +17,20 @@ const FixedLink = styled(StyledLink)`
 `;
 
 export default function Home() {
-  const { data } = useSWR("/api/places", { fallbackData: [] });
+  const { data } = useSWR('/api/places', { fallbackData: [] });
+  console.log('data', data);
 
   return (
     <>
       <ListContainer>
         {data.map((place) => {
           return (
-            <li key={place.id}>
+            <li key={place._id}>
               <Card
                 name={place.name}
                 image={place.image}
                 location={place.location}
-                id={place.id}
+                id={place._id}
               />
             </li>
           );
