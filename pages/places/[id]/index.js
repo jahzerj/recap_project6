@@ -1,10 +1,10 @@
-import { useRouter } from "next/router";
-import useSWR from "swr";
-import styled from "styled-components";
-import Comments from "../../../components/Comments";
-import { StyledLink } from "../../../components/StyledLink";
-import { StyledButton } from "../../../components/StyledButton";
-import { StyledImage } from "../../../components/StyledImage";
+import { useRouter } from 'next/router';
+import useSWR from 'swr';
+import styled from 'styled-components';
+import Comments from '../../../components/Comments';
+import { StyledLink } from '../../../components/StyledLink';
+import { StyledButton } from '../../../components/StyledButton';
+import { StyledImage } from '../../../components/StyledImage';
 
 const ImageContainer = styled.div`
   position: relative;
@@ -40,12 +40,31 @@ export default function DetailsPage() {
   if (!isReady || isLoading || error) return <h2>Loading...</h2>;
 
   async function deletePlace() {
-    console.log("Deleting place ...");
+    const response = await fetch(`/api/places/${id}`, { method: 'DELETE' });
+
+    if (!response.ok) {
+      console.log('Here is your error', response.status);
+      return;
+    }
+    router.push('/');
   }
+
+  // async function editPlace(place) {
+  //   const response = await fetch(`/api/places/${id}`, {
+  //     method: 'PUT',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(place),
+  //   });
+  //   if (response.ok) {
+  //     router.push('/');
+  //   }
+  // }
 
   return (
     <>
-      <StyledLink href={"/"} $justifySelf="start">
+      <StyledLink href={'/'} $justifySelf="start">
         back
       </StyledLink>
       <ImageContainer>

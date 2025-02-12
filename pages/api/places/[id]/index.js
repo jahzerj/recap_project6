@@ -18,8 +18,20 @@ export default async function handler(request, response) {
       return;
     }
 
-    //if (request.method === 'DELETE")
-    //etc...
+    if (request.method === 'PUT') {
+      const updatePlace = request.body;
+      console.log('Updating this place', updatePlace);
+      await Place.findByIdAndUpdate(id, updatePlace);
+      response.status(200).json({ message: 'Successfully updated place' });
+      return;
+    }
+    if (request.method === 'DELETE') {
+      await Place.findByIdAndDelete(id);
+      response.status(200).json({ message: 'Successfully delete this place' });
+      return;
+    }
+
+    response.status(405).json({ status: 'Method Not Allowed' });
   } catch (error) {
     console.error(error);
     response.status(500).json({ message: 'Internal Server Error.' });
