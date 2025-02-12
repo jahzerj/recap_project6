@@ -12,6 +12,10 @@ export default async function handler(request, response) {
       response.status(200).json(places);
       return;
     }
+
+    if(request.method === 'POST') {
+      const place = await 
+    }
   }
 
   
