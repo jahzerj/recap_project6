@@ -31,17 +31,23 @@ export default function Comments({ placeId, locationName }) {
 
   async function handleSubmitComment(event) {
     event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+
+    if (!data.name || !data.comment) {
+      alert('Both fields are required');
+      return;
+    }
 
     const response = await fetch('api/comments/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, comments, placeId }),
+      body: JSON.stringify({ ...data, placeId }),
     });
 
     if (response.ok) {
-      setCommentText('');
-      setName('');
       mutate(`/api/comments/${placeId}`);
+      event.target.reset(); // Clear form fields
     }
     console.log('adding comment');
   }
@@ -69,19 +75,19 @@ export default function Comments({ placeId, locationName }) {
       {comments && (
         <>
           <h2>{comments.length} fans commented on this place:</h2>
-          {comments.map(({ _id, name, comment }) => {
-            return (
-              <Fragment key={_id}>
-                <CommentText>
-                  <small>
-                    <strong>{name}</strong> commented on {locationName || 'this place'}
-                  </small>
-                </CommentText>
-                <span>{comment}</span>
-                <StyledButton onClick={() => handleDeleteComment(_id)}>X</StyledButton>
-              </Fragment>
-            );
-          })}
+          {comments.map(({ _id, name, comment }) => (
+            <Fragment key={_id}>
+              <CommentText>
+                <small>
+                  <strong>{name}</strong> commented on {locationName || 'this place'}
+                </small>
+              </CommentText>
+
+              <span>{comment}</span>
+
+              <StyledButton onClick={() => handleDeleteComment(_id)}>X</StyledButton>
+            </Fragment>
+          ))}
         </>
       )}
     </Article>
