@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import { useRouter } from "next/router";
-import { FormContainer, Input, Label } from "./Form";
-import { StyledButton } from "./StyledButton";
-import useSWR from "swr";
-import { Fragment } from "react";
+import styled from 'styled-components';
+import { useRouter } from 'next/router';
+import { FormContainer, Input, Label } from './Form';
+import { StyledButton } from './StyledButton';
+import useSWR from 'swr';
+import { Fragment } from 'react';
 
 const Article = styled.article`
   display: flex;
@@ -20,27 +20,37 @@ const CommentText = styled.p`
   padding: 20px;
 `;
 
-export default function Comments({ locationName }) {
+export default function Comments({ placeId }) {
   const router = useRouter();
   const { isReady } = router;
   const { id } = router.query;
-  const {
-    data: comments,
-    mutate,
-    isLoading,
-    error,
-  } = useSWR(`/api/comments/${id}`);
+  const { data: comments, mutate, isLoading, error } = useSWR(`/api/comments/${id}`);
 
   if (!isReady || isLoading || error) return <h2>Loading...</h2>;
 
   async function handleSubmitComment(event) {
     event.preventDefault();
-    console.log("adding comment");
+    const response = await fetch('api/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, comment: commentText, placeId }),
+    });
+
+    if (response.ok) {
+      setCommentText('');
+      setName('');
+      mutate(`/api/comments/${placeId}`);
+    }
+    console.log('adding comment');
   }
 
   async function handleDeleteComment(comment_id) {
-    console.log("deleting comment");
+    await fetch(`/api/comments/${comment_Id}`, { method: 'DELETE' });
+    mutate(`/api/comments/${placeId}`);
   }
+
+  if (error) return <p>Error loading comments</p>;
+  if (!comments) return <p>Loading...</p>;
 
   return (
     <Article>
@@ -63,9 +73,7 @@ export default function Comments({ locationName }) {
                   </small>
                 </CommentText>
                 <span>{comment}</span>
-                <StyledButton onClick={() => handleDeleteComment(_id)}>
-                  X
-                </StyledButton>
+                <StyledButton onClick={() => handleDeleteComment(_id)}>X</StyledButton>
               </Fragment>
             );
           })}
