@@ -39,7 +39,6 @@
 //       return response.status(201).json(newComment);
 //     }
 
-
 //     response.status(405).json({ status: 'Method not allowed' });
 //   } catch (error) {
 //     console.error(error);
@@ -47,33 +46,33 @@
 //   }
 // }
 
-import dbConnect from "../../../../lib/dbConnect";
-import Comment from "../../../../models/Comment";
+import dbConnect from '@/db/connect';
+import Comment from '@/db/models/Comment';
 
 export default async function handler(request, response) {
   try {
     await dbConnect();
     const { id, commentId } = request.query;
 
-    if (request.method === "GET") {
+    if (request.method === 'GET') {
       const comments = await Comment.find({ placeId: id });
       return response.status(200).json(comments);
     }
 
-    if (request.method === "POST") {
+    if (request.method === 'POST') {
       const { name, comment } = request.body;
 
       if (!name || !comment || !id) {
-        return response.status(400).json({ message: "Missing required fields" });
+        return response.status(400).json({ message: 'Missing required fields' });
       }
 
       const newComment = await Comment.create({ name, comment, placeId: id });
       return response.status(201).json(newComment);
     }
 
-    if (request.method === "PUT") {
+    if (request.method === 'PUT') {
       if (!commentId) {
-        return response.status(400).json({ message: "Missing comment ID" });
+        return response.status(400).json({ message: 'Missing comment ID' });
       }
 
       const { name, comment } = request.body;
@@ -84,25 +83,24 @@ export default async function handler(request, response) {
       );
 
       if (!updatedComment) {
-        return response.status(404).json({ message: "Comment not found" });
+        return response.status(404).json({ message: 'Comment not found' });
       }
 
       return response.status(200).json(updatedComment);
     }
 
-    if (request.method === "DELETE") {
+    if (request.method === 'DELETE') {
       if (!commentId) {
-        return response.status(400).json({ message: "Missing comment ID" });
+        return response.status(400).json({ message: 'Missing comment ID' });
       }
 
       await Comment.findByIdAndDelete(commentId);
-      return response.status(200).json({ message: "Comment deleted successfully" });
+      return response.status(200).json({ message: 'Comment deleted successfully' });
     }
 
-    return response.status(405).json({ message: "Method Not Allowed" });
-
+    return response.status(405).json({ message: 'Method Not Allowed' });
   } catch (error) {
-    console.error("Database operation failed:", error);
-    return response.status(500).json({ message: "Server error", error });
+    console.error('Database operation failed:', error);
+    return response.status(500).json({ message: 'Server error', error });
   }
 }

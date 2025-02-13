@@ -20,7 +20,7 @@ const CommentText = styled.p`
   padding: 20px;
 `;
 
-export default function Comments({ placeId }) {
+export default function Comments({ placeId, locationName }) {
   const router = useRouter();
   const { isReady } = router;
   const { id } = router.query;
