@@ -1,11 +1,26 @@
 import dbConnect from '@/db/connect';
 import Place from '@/db/models/Place';
+import Comment from '@/db/models/Comment';
 
 export default async function handler(request, response) {
   await dbConnect();
   const { id } = request.query;
 
   try {
+    if (request.method === 'DELETE') {
+      console.log(`Deleting place with ID: ${id}`);
+
+      await Comment.deleteMany({ placeId: id });
+      const deletedPlace = await Place.findByIdAndDelete(id);
+
+      if (!deletedPlace) {
+        return response.status(404).json({ message: 'Place not found' });
+      }
+
+      response.status(200).json({ message: 'Successfully deleted this place' });
+      return;
+    }
+
     if (request.method === 'GET') {
       const place = await Place.findById(id);
 
@@ -23,12 +38,6 @@ export default async function handler(request, response) {
       console.log('Updating this place', updatePlace);
       await Place.findByIdAndUpdate(id, updatePlace);
       response.status(200).json({ message: 'Successfully updated place' });
-      return;
-    }
-    if (request.method === 'DELETE') {
-      await Comment.deleteMany({ placeId: id });
-      await Place.findByIdAndDelete(_id);
-      response.status(200).json({ message: 'Successfully delete this place' });
       return;
     }
 
