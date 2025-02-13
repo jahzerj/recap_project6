@@ -39,7 +39,7 @@ export default function Comments({ placeId, locationName }) {
       return;
     }
 
-    const response = await fetch('api/comments/', {
+    const response = await fetch(`/api/comments/${placeId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...data, placeId }),
@@ -49,7 +49,6 @@ export default function Comments({ placeId, locationName }) {
       mutate(`/api/comments/${placeId}`);
       event.target.reset(); // Clear form fields
     }
-    console.log('adding comment');
   }
 
   async function handleDeleteComment(_id) {
@@ -63,6 +62,8 @@ export default function Comments({ placeId, locationName }) {
   if (error) return <p>Error loading comments</p>;
   if (!comments) return <p>Loading...</p>;
 
+  const commentsArray = Array.isArray(comments) ? comments : [];
+
   return (
     <Article>
       <FormContainer onSubmit={handleSubmitComment}>
@@ -72,7 +73,8 @@ export default function Comments({ placeId, locationName }) {
         <Input type="text" name="comment" placeholder="comment here..." />
         <StyledButton type="submit">Send</StyledButton>
       </FormContainer>
-      {comments && (
+
+      {commentsArray.length > 0 ? (
         <>
           <h2>{comments.length} fans commented on this place:</h2>
           {comments.map(({ _id, name, comment }) => (
@@ -89,6 +91,8 @@ export default function Comments({ placeId, locationName }) {
             </Fragment>
           ))}
         </>
+      ) : (
+        <p>No comments yet. Be the first to comment!</p>
       )}
     </Article>
   );
