@@ -49,19 +49,6 @@ export default function DetailsPage() {
     router.push('/');
   }
 
-  // async function editPlace(place) {
-  //   const response = await fetch(`/api/places/${id}`, {
-  //     method: 'PUT',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(place),
-  //   });
-  //   if (response.ok) {
-  //     router.push('/');
-  //   }
-  // }
-
   return (
     <>
       <StyledLink href={'/'} $justifySelf="start">
@@ -81,10 +68,9 @@ export default function DetailsPage() {
       <h2>
         {place.name}, {place.location}
       </h2>
-      <StyledLocationLink href={place.mapURL}>
-        Location on Google Maps
-      </StyledLocationLink>
+      <StyledLocationLink href={place.mapURL}>Location on Google Maps</StyledLocationLink>
       <p>{place.description}</p>
+      <Comments placeId={id} locationName={place.name} />
       <ButtonContainer>
         <StyledLink href={`/places/${id}/edit`}>Edit</StyledLink>
         <StyledButton onClick={deletePlace} type="button" $variant="delete">
